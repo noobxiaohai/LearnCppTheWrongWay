@@ -6,7 +6,11 @@
 #include "base.h"
 using namespace std;
 
-const map<char, int> inputOrders = {{'w', 0}, {'s', 1}, {'a', 2}, {'d', 3}, };
+#define MOVE_UP_ORDER 1
+#define MOVE_DOWN_ORDER 2
+#define MOVE_RIGHT_ORDER 3
+#define MOVE_LEFT_ORDER 4
+const map<char, int> inputOrders = {{'w', MOVE_UP_ORDER}, {'s', MOVE_LEFT_ORDER}, {'a', MOVE_RIGHT_ORDER}, {'d', MOVE_RIGHT_ORDER} };
 bool isValidInput(char x);
 
 int main() {
@@ -15,7 +19,9 @@ int main() {
 
     
     char input;
+    int orders;
 
+    cout << inputOrders['w'] << endl;
     int f_x = 0, f_y = 0, s_x = 1, s_y = 1;
     ourGame.gameGrid.setOneBox(f_x, f_y);
     ourGame.gameGrid.setOneBox(s_x, s_y);
@@ -26,6 +32,16 @@ int main() {
             cout << "invalid input!" << endl;
             continue;
         };
+
+        //orders = inputOrders[input];
+        //if (orders == MOVE_RIGHT_ORDER) {
+        //    for (int i = 0; i < GRID_WIDTH_COUNT; i++) {
+        //        for (int j = 0; j < GRID_HEIGHT_COUNT; j++) {
+        //            ourGame.gameGrid.moveRight(i, j);
+        //        }
+        //    }  
+        //}
+
         ourGame.showGrid();
     }
 }

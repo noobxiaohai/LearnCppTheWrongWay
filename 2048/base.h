@@ -34,6 +34,29 @@ public:
         cout << "test set" << gridVector[x][y].value << endl;
         return true;
     }
+
+    bool moveRight(int x, int y){
+        Box* movedBox = &gridVector[x][y]; //todo: use pointer is better
+
+        if ((*movedBox).value == 0) {
+            return false;
+        }
+
+        int p = x;
+        while (p + 1 != GRID_WIDTH_COUNT) {
+            if (gridVector[p + 1][y].value == 0) {
+                gridVector[p + 1][y].value = gridVector[p][y].value;
+                gridVector[p][y].value = 0;
+            }
+
+            // todo: resolve that next box can be combined
+
+            p++;
+        }
+
+        return true;
+    }
+
 };
 
 Grid::Grid(void){
