@@ -10,39 +10,74 @@ using namespace std;
 #define MOVE_DOWN_ORDER 2
 #define MOVE_RIGHT_ORDER 3
 #define MOVE_LEFT_ORDER 4
-const map<char, int> inputOrders = {{'w', MOVE_UP_ORDER}, {'s', MOVE_LEFT_ORDER}, {'a', MOVE_RIGHT_ORDER}, {'d', MOVE_RIGHT_ORDER} };
+map<char, int> inputOrders = { {'w', MOVE_UP_ORDER}, {'s', MOVE_DOWN_ORDER}, {'a', MOVE_LEFT_ORDER}, {'d', MOVE_RIGHT_ORDER} };
+
 bool isValidInput(char x);
 
 int main() {
 
     Game ourGame;
 
-    
     char input;
     int orders;
-
-    cout << inputOrders['w'] << endl;
-    int f_x = 0, f_y = 0, s_x = 1, s_y = 1;
-    ourGame.gameGrid.setOneBox(f_x, f_y);
-    ourGame.gameGrid.setOneBox(s_x, s_y);
-    ourGame.showGrid();
     
+    ourGame.gameGrid.setOneBox(0, 1);
+    ourGame.gameGrid.setOneBox(0, 2);
+    ourGame.gameGrid.setOneBox(0, 3);
+    ourGame.gameGrid.setOneBox(0, 0);
+    ourGame.gameGrid.setOneBox(1, 1);
+    ourGame.gameGrid.setOneBox(2, 2);
+    ourGame.gameGrid.setOneBox(3, 3);
+    ourGame.gameGrid.setOneBox(0, 0);
+    ourGame.gameGrid.showGrid();
+    bool isBoxMoved;
     while(cin >> input){
         if(isValidInput(input) != true) {
             cout << "invalid input!" << endl;
             continue;
         };
+        isBoxMoved = false;
+        orders = inputOrders[input];
+        if (orders == MOVE_RIGHT_ORDER) {
+            for (int i = 0; i < GRID_HEIGHT_COUNT; i++) {
+                for (int j = GRID_WIDTH_COUNT - 1; j >= 0; j--) {
+                    bool thisMoved = ourGame.gameGrid.moveRight(j, i);
+                    cout << "debug is moved " << i << j << '|' << thisMoved <<endl;
+                    isBoxMoved = isBoxMoved || thisMoved;
+                }
+            }  
+        }
 
-        //orders = inputOrders[input];
-        //if (orders == MOVE_RIGHT_ORDER) {
-        //    for (int i = 0; i < GRID_WIDTH_COUNT; i++) {
-        //        for (int j = 0; j < GRID_HEIGHT_COUNT; j++) {
-        //            ourGame.gameGrid.moveRight(i, j);
-        //        }
-        //    }  
-        //}
+        if (orders == MOVE_LEFT_ORDER) {
+            for (int i = 0; i < GRID_HEIGHT_COUNT; i++) {
+                for (int j = 0; j <= GRID_WIDTH_COUNT - 1; j++) {
+                    bool thisMoved = ourGame.gameGrid.moveLeft(j, i);
+                    isBoxMoved = isBoxMoved || thisMoved;
+                }
+            }
+        }
 
-        ourGame.showGrid();
+        if (orders == MOVE_DOWN_ORDER) {
+            for (int i = 0; i < GRID_WIDTH_COUNT; i++) {
+                for (int j = GRID_HEIGHT_COUNT - 1; j >= 0; j--) {
+                    bool thisMoved = ourGame.gameGrid.moveDown(i, j);
+                    isBoxMoved = isBoxMoved || thisMoved;
+                }
+            }
+        }
+
+        if (orders == MOVE_UP_ORDER) {
+            for (int i = 0; i < GRID_WIDTH_COUNT; i++) {
+                for (int j = 0; j <= GRID_HEIGHT_COUNT - 1; j++) {
+                    bool thisMoved = ourGame.gameGrid.moveUp(i, j);
+                    isBoxMoved = isBoxMoved || thisMoved;
+                }
+            }
+        }
+
+        cout << "is box moved " << isBoxMoved << endl;
+
+        ourGame.gameGrid.showGrid();
     }
 }
 

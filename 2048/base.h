@@ -13,6 +13,7 @@ class Box
 public:
 	int xPos, yPos;
 	int value = 0;
+    bool isCombined = false;
     Box(int x, int y);
 };
 
@@ -26,36 +27,158 @@ class Grid
 public:
 	vector<vector<Box> > gridVector;
     Grid();
+    vector<int[2]> emptyBoxes;
+
     
     bool setOneBox(int x, int y){
-        if(gridVector[x][y].value !=0) return false;
+        if(gridVector[y][x].value !=0) return false;
         
-        gridVector[x][y].value = INIT_BOX_VALUE;
+        gridVector[y][x].value = INIT_BOX_VALUE;
         cout << "test set" << gridVector[x][y].value << endl;
         return true;
     }
 
-    bool moveRight(int x, int y){
-        Box* movedBox = &gridVector[x][y]; //todo: use pointer is better
 
+    int showGrid(){
+        for (auto lineBoxes : gridVector) {
+            cout << "| ";
+            for (auto box : lineBoxes) {
+                cout << box.value << " | ";
+            }
+            cout << endl;
+        }
+
+        return 1;
+    }
+
+    bool moveRight(int x, int y){
+        Box* movedBox = &gridVector[y][x]; //todo: use pointer is better
+        bool isMoved = false;
         if ((*movedBox).value == 0) {
-            return false;
+            return isMoved;
+        }
+        
+        int p = x;
+        while (p + 1 != GRID_WIDTH_COUNT) {
+            Box* movingBox = &gridVector[y][p];
+            Box* stillBox = &gridVector[y][p + 1];
+
+            if (!moveBoxes(movingBox, stillBox)) {
+                //break;
+                isMoved = false;
+                return isMoved;
+            }
+            isMoved = true;
+            p++;
+        }
+        return isMoved;
+    }
+
+    bool moveLeft(int x, int y) {
+        Box* movedBox = &gridVector[y][x]; //todo: use pointer is better
+        bool isMoved = false;
+        if ((*movedBox).value == 0) {
+            return isMoved;
         }
 
         int p = x;
-        while (p + 1 != GRID_WIDTH_COUNT) {
-            if (gridVector[p + 1][y].value == 0) {
-                gridVector[p + 1][y].value = gridVector[p][y].value;
-                gridVector[p][y].value = 0;
-            }
+        while (p - 1 >= 0) {
+            Box* movingBox = &gridVector[y][p];
+            Box* stillBox = &gridVector[y][p - 1];
 
-            // todo: resolve that next box can be combined
+            if (!moveBoxes(movingBox, stillBox)) {
+                isMoved = false;
+                return isMoved;
+            }
+            isMoved = true;
+            p--;
+        }
+        return isMoved;
+    
+    }
+
+    bool moveDown(int x, int y) {
+        Box* movedBox = &gridVector[y][x];
+        bool isMoved = false;
+        if ((*movedBox).value == 0) {
+            return isMoved;
+        }
+
+        int p = y;
+        while (p + 1 != GRID_WIDTH_COUNT) {
+            Box* movingBox = &gridVector[p][x];
+            Box* stillBox = &gridVector[p + 1][x];
+
+            if (!moveBoxes(movingBox, stillBox)) {
+                isMoved = false;
+                return isMoved;
+            }
+            isMoved = true;
 
             p++;
         }
+        return isMoved;
 
-        return true;
     }
+
+    bool moveUp(int x, int y) {
+        Box* movedBox = &gridVector[y][x];
+        bool isMoved = false;
+        if ((*movedBox).value == 0) {
+            return isMoved;
+        }
+
+        int p = y;
+        while (p - 1 >= 0) {
+            Box* movingBox = &gridVector[p][x];
+            Box* stillBox = &gridVector[p - 1][x];
+
+            if (!moveBoxes(movingBox, stillBox)) {
+                isMoved = false;
+                return isMoved;
+            }
+            isMoved = true;
+            p--;
+        }
+        return isMoved;
+    }
+
+    bool moveBoxes(Box* movingBox, Box* stillBox) {
+        if ((*movingBox).value == 0) {
+            cout << "moveBoxes function error!!!!" << (*movingBox).xPos << ' ' << (*movingBox).yPos << endl;
+            return false;
+        }
+
+        if ((*stillBox).value == 0) {
+            (*stillBox).value = (*movingBox).value;
+            (*movingBox).value = 0;
+            return true;
+        }
+    
+        if ((*stillBox).value == (*movingBox).value) {
+            (*stillBox).value = (*stillBox).value + (*movingBox).value;
+            (*movingBox).value = 0;
+            return true;
+        }
+    
+        return false;
+    }
+
+    void getEmptyBoxes(void) {
+        for (auto lineBoxes : gridVector) {
+            for (auto box : lineBoxes) {
+                if (box.value == 0) {
+                    emptyBoxes.push_back({ box.xPos, box.yPos });
+                }
+            }
+        }
+    }
+
+    bool generateNewBox() {
+    
+    
+    }
+
 
 };
 
@@ -78,20 +201,5 @@ class Game
 public:
 	int score;
 	Grid gameGrid;
-
-    Game(): gameGrid(){};
-	int showGrid()
-	{
-		for (auto lineBoxes : gameGrid.gridVector) {
-			cout << "| ";
-			for (auto box: lineBoxes) {
-				cout << box.value << " | ";
-			}
-			cout << endl;
-		}
-
-		return 1;
-	}
-
 };
 //
