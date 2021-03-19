@@ -15,20 +15,13 @@ map<char, int> inputOrders = { {'w', MOVE_UP_ORDER}, {'s', MOVE_DOWN_ORDER}, {'a
 bool isValidInput(char x);
 
 int main() {
-
     Game ourGame;
 
     char input;
     int orders;
     
-    ourGame.gameGrid.setOneBox(0, 1);
-    ourGame.gameGrid.setOneBox(0, 2);
-    ourGame.gameGrid.setOneBox(0, 3);
-    ourGame.gameGrid.setOneBox(0, 0);
-    ourGame.gameGrid.setOneBox(1, 1);
-    ourGame.gameGrid.setOneBox(2, 2);
-    ourGame.gameGrid.setOneBox(3, 3);
-    ourGame.gameGrid.setOneBox(0, 0);
+    ourGame.gameGrid.generateNewBox();
+    ourGame.gameGrid.generateNewBox();
     ourGame.gameGrid.showGrid();
     bool isBoxMoved;
     while(cin >> input){
@@ -42,7 +35,6 @@ int main() {
             for (int i = 0; i < GRID_HEIGHT_COUNT; i++) {
                 for (int j = GRID_WIDTH_COUNT - 1; j >= 0; j--) {
                     bool thisMoved = ourGame.gameGrid.moveRight(j, i);
-                    cout << "debug is moved " << i << j << '|' << thisMoved <<endl;
                     isBoxMoved = isBoxMoved || thisMoved;
                 }
             }  
@@ -76,6 +68,9 @@ int main() {
         }
 
         cout << "is box moved " << isBoxMoved << endl;
+        if (isBoxMoved) {
+            ourGame.gameGrid.generateNewBox();
+        }
 
         ourGame.gameGrid.showGrid();
     }

@@ -1,12 +1,19 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <iomanip>
+#include <cstdlib>
+#include <time.h>
+#include <math.h>
 
 using namespace std;
 
 #define GRID_WIDTH_COUNT 4
 #define GRID_HEIGHT_COUNT 4
-#define INIT_BOX_VALUE 2
+#define INIT_VALUE_SCALE 10
+#define INIT_BOX_VALUE pow(2, INIT_VALUE_SCALE)
+
+int randomInt(int length);
 
 class Box
 {
@@ -27,14 +34,12 @@ class Grid
 public:
 	vector<vector<Box> > gridVector;
     Grid();
-    vector<int[2]> emptyBoxes;
+    vector<vector<int>> emptyBoxes;
 
     
     bool setOneBox(int x, int y){
         if(gridVector[y][x].value !=0) return false;
-        
         gridVector[y][x].value = INIT_BOX_VALUE;
-        cout << "test set" << gridVector[x][y].value << endl;
         return true;
     }
 
@@ -43,7 +48,7 @@ public:
         for (auto lineBoxes : gridVector) {
             cout << "| ";
             for (auto box : lineBoxes) {
-                cout << box.value << " | ";
+                cout << setw(4) << box.value << " | ";
             }
             cout << endl;
         }
@@ -165,6 +170,7 @@ public:
     }
 
     void getEmptyBoxes(void) {
+        emptyBoxes.clear();
         for (auto lineBoxes : gridVector) {
             for (auto box : lineBoxes) {
                 if (box.value == 0) {
@@ -175,8 +181,17 @@ public:
     }
 
     bool generateNewBox() {
-    
-    
+        getEmptyBoxes();
+        if (emptyBoxes.empty()) return false;
+
+        int length = emptyBoxes.size();
+        
+        int randomIdx = randomInt(length);
+        int newBoxX = emptyBoxes[randomIdx][0];
+        int newBoxY = emptyBoxes[randomIdx][1];
+        setOneBox(newBoxX, newBoxY);
+        cout << "generated box pos is: " << newBoxX << '|' << newBoxY << endl;
+        return true;
     }
 
 
@@ -203,3 +218,8 @@ public:
 	Grid gameGrid;
 };
 //
+
+int randomInt(int length) {
+    srand((unsigned)time(NULL));
+    return (rand() % (length));
+}
